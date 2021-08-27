@@ -1,0 +1,52 @@
+{%  extends 'CustomerKhata/main.html' %}
+
+{% block content %}
+
+    <br>
+    <div class="row">
+        <div class="col">
+            <div class="card card-body">
+                <form method="get">
+                    {{myFilter.form}}
+                <button class="btn btn-primary" type="submit">
+                    <i class="fas fa-search-location"></i>Search</button>
+                </form>
+            </div>
+        </div>
+    </div>
+	<br>
+    <a class="btn btn-info" href="{% url 'transaction_pdf_view' customer.id %}" target="_blank">
+        <i class="fas fa-eye"></i>View in PDF</a>
+    <a class="btn btn-info" href="{% url 'transaction_pdf_download' customer.id %}" target="_blank">
+        <i class="fas fa-file-download"></i>Download in PDF</a>
+
+    <div class="row">
+        <h1>Transaction Details of the customer {{customer.name}}:</h1>
+
+        <table class="table table-ct">
+            <tr>
+                <th>
+                    <marquee>{{labeltext}}: {{balancetext}} <i class="fas fa-rupee-sign"></i></marquee>
+                </th>
+                <th>Entries</th>
+                <th>You Gave</th>
+                <th>You Got</th>
+            </tr>
+
+            {% for transaction in transactions %}
+                <tr>
+                    <td></td>
+                    <td>{{transaction.transaction_date}}</td>
+                    <td>{{transaction.AmountGiven}} <i class="fas fa-rupee-sign"></i></td>
+                    <td>{{transaction.AmountGot}} <i class="fas fa-rupee-sign"></i></td>
+                </tr>
+            {% endfor %}
+
+            <tr>
+                <td><a class="btn btn-ct btn-info" href="{% url 'add_transaction' customer.id %}">
+                    <i class="fas fa-rupee-sign"></i>ADD/UPDATE_Transaction </a></td>
+            </tr>
+        </table>
+    </div>
+
+{% endblock %}

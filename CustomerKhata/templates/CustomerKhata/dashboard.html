@@ -1,0 +1,77 @@
+{%  extends 'CustomerKhata/main.html' %}
+
+{% block content %}
+
+{%  include 'CustomerKhata/status.html' %}
+
+	<br>
+	<div class="row">
+	<div class="col-md-5">
+		<h5>Customer details:</h5>
+		<hr>
+		{% include 'CustomerKhata/message.html' %}
+
+		<form method="get">
+			{{myFilter.form}}
+		<button class="btn btn-primary" type="submit">
+			<i class="fas fa-search-location"></i>Search</button>
+		</form>
+
+		<a class="btn btn-info" href="{% url 'pdf_view' %}" target="_blank">
+			<i class="fas fa-eye"></i>View in PDF</a>
+		<a class="btn btn-info"  href="{% url 'pdf_download' %}">
+			<i class="fas fa-file-download"></i>Download PDF</a>
+
+		<div class="card card-body">
+			<a class="btn btn-primary  btn-sm btn-block" href="{% url 'add_customer' %}">
+				<i class="fas fa-user-plus"></i>Add Customer</a>
+			<table class="table table-sm">
+				<tr>
+					<th></th>
+					<th>Customer</th>
+					<th>Phone</th>
+				</tr>
+
+				{% for t in customers %}
+					<tr>
+						<td><a class="btn btn-sm btn-info" href="{% url 'customer' t.id %}">
+							<i class="fas fa-eye"></i>View</a></td>
+						<td>{{ t.name }}</td>
+						<td>{{ t.phone }}</td>
+					</tr>
+				{% endfor %}
+
+			</table>
+		</div>
+	</div>
+
+	<div class="col-md-7">
+		<h5>Last 10 Transactions:</h5>
+		<hr>
+		<div class="card card-body">
+
+			<table class="table table-sm">
+				<tr>
+					<th>Customer_Name</th>
+					<th>Phone_Num</th>
+					<th>Transaction_Date</th>
+					<th>Amount_Given</th>
+					<th>Amount_Got</th>
+				</tr>
+
+				{% for transaction in transactions %}
+					<tr>
+						<td>{{transaction.customer.name}}</td>
+						<td>{{transaction.customer.phone}}</td>
+						<td>{{transaction.transaction_date}}</td>
+						<td>{{transaction.AmountGiven}} <i class="fas fa-rupee-sign"></i></td>
+						<td>{{transaction.AmountGot}} <i class="fas fa-rupee-sign"></i></td>
+					</tr>
+				{% endfor %}
+
+			</table>
+		</div>
+	</div>
+</div>
+
+{% endblock %}
