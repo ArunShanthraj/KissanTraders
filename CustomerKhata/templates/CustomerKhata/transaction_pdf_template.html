@@ -5,6 +5,10 @@
 <style>
     @page {
         size: a4 portrait;
+        @frame logo_frame {
+        	-pdf-frame-content: logo_content;
+            left: 30pt; width: 512pt; top: 20pt; height: 70pt;
+        }
         @frame header_frame {           /* Static Frame */
             -pdf-frame-content: header_content;
             left: 250pt; width: 512pt; top: 50pt; height: 40pt;
@@ -22,6 +26,10 @@
 
 <body>
     <!-- Content for Static Frame 'header_frame' -->
+    <div id="logo_content">
+		<img src="{% static 'images/logo.png' %}">
+    </div>
+
     <div id="header_content">
     	<h1>{{header_tag}}</h1>
     </div>

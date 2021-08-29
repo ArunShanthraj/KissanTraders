@@ -142,3 +142,5 @@ MESSAGE_TAGS = {
     messages.ERROR: 'alert-danger',
 }
 
+# STATIC_ROOT = r'H:\PyCharmProjects\KissanTraders\static'
+
