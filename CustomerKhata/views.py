@@ -55,7 +55,8 @@ def render_to_pdf(template_src, context_dict={}):
 class ViewPDF(View):
     def get(self, request, *args, **kwargs):
         customers = Customer.objects.all().values()
-        all_customers_transaction = CustomerTransaction.objects.all().values('customer').annotate(gisum=Sum('AmountGiven'), gosum=Sum('AmountGot'), eachbalance=F('gisum')-F('gosum'))
+        all_customers_transaction = CustomerTransaction.objects.all().values('customer').annotate(
+            gisum=Sum('AmountGiven'), gosum=Sum('AmountGot'), eachbalance=F('gisum') - F('gosum'))
         totalAmount = sum(all_customers_transaction.values_list('eachbalance', flat=True))
         transaction_dict = {d['customer']: d for d in all_customers_transaction}
 
@@ -85,7 +86,8 @@ class ViewPDF(View):
 class DownloadPDF(View):
     def get(self, request, *args, **kwargs):
         customers = Customer.objects.all().values()
-        all_customers_transaction = CustomerTransaction.objects.all().values('customer').annotate(gisum=Sum('AmountGiven'), gosum=Sum('AmountGot'), eachbalance=F('gisum')-F('gosum'))
+        all_customers_transaction = CustomerTransaction.objects.all().values('customer').annotate(
+            gisum=Sum('AmountGiven'), gosum=Sum('AmountGot'), eachbalance=F('gisum') - F('gosum'))
         totalAmount = sum(all_customers_transaction.values_list('eachbalance', flat=True))
         transaction_dict = {d['customer']: d for d in all_customers_transaction}
 
@@ -114,7 +116,7 @@ class DownloadPDF(View):
         pdf = render_to_pdf('CustomerKhata/pdf_template.html', data)
         response = HttpResponse(pdf, content_type='application/pdf')
         filename = 'Customer_Details_%s.pdf' % (vdatetime)
-        content = 'attachment; filename= %s' %(filename)
+        content = 'attachment; filename= %s' % (filename)
         response['Content-Disposition'] = content
         return response
 
@@ -174,7 +176,7 @@ class DownloadtransactionPDF(View):
         pdf = render_to_pdf('CustomerKhata/transaction_pdf_template.html', data)
         response = HttpResponse(pdf, content_type='application/pdf')
         filename = 'Transaction_Details_%s.pdf' % (vdatetime)
-        content = 'attachment; filename= %s' %(filename)
+        content = 'attachment; filename= %s' % (filename)
         response['Content-Disposition'] = content
         return response
 
@@ -242,7 +244,10 @@ def home(request):
     customers = Customer.objects.all().values()
     total_customers = customers.count()
     transactiondata = CustomerTransaction.objects.all().order_by('-transaction_date')[:10]
-    groupeddata = CustomerTransaction.objects.all().values('customer').annotate(gisum=Sum('AmountGiven'), gosum=Sum('AmountGot'), givenamount=F('gisum')-F('gosum'), gotamount=F('gosum')-F('gisum'))
+    groupeddata = CustomerTransaction.objects.all().values('customer').annotate(gisum=Sum('AmountGiven'),
+                                                                                gosum=Sum('AmountGot'),
+                                                                                givenamount=F('gisum') - F('gosum'),
+                                                                                gotamount=F('gosum') - F('gisum'))
     TotalAmountGiven = sum(groupeddata.values_list('givenamount', flat=True))
     TotalAmountGot = sum(groupeddata.values_list('gotamount', flat=True))
 
@@ -255,7 +260,8 @@ def home(request):
     if TotalAmountGot < 0:
         TotalAmountGot = 0
 
-    context = {'customers': customers, 'transactions': transactiondata, 'total_customers': total_customers, 'yougive': TotalAmountGot, 'youget': TotalAmountGiven, 'myFilter': myFilter}
+    context = {'customers': customers, 'transactions': transactiondata, 'total_customers': total_customers,
+               'yougive': TotalAmountGot, 'youget': TotalAmountGiven, 'myFilter': myFilter}
     return render(request, 'CustomerKhata/dashboard.html', context)
 
 
@@ -279,11 +285,11 @@ def Add_Customer_form_submission(request):
 
     for instance in Customer.objects.all():
         if instance.name == customer_name:
-            messages.error(request, 'There is an existing customer with the name:' +customer_name)
+            messages.error(request, 'There is an existing customer with the name:' + customer_name)
             return redirect('add_customer')
 
         elif instance.phone == customer_phone:
-            messages.error(request, 'There is an existing customer with the phone:' +customer_phone)
+            messages.error(request, 'There is an existing customer with the phone:' + customer_phone)
             return redirect('add_customer')
 
     customer_info = Customer(name=customer_name, phone=customer_phone)
@@ -313,13 +319,15 @@ def customer(request, pk):
     else:
         label = "balance"
         balance = 0
-    context = {'customer': selectedcustomer, 'transactions': selected_customertransaction, 'labeltext': label, 'balancetext': balance, 'myFilter': myFilter}
+    context = {'customer': selectedcustomer, 'transactions': selected_customertransaction, 'labeltext': label,
+               'balancetext': balance, 'myFilter': myFilter}
     return render(request, 'CustomerKhata/customer.html', context)
 
 
 @login_required(login_url='login')
 def add_transaction(request, pk):
-    transactionformset = inlineformset_factory(Customer, CustomerTransaction, fields=('AmountGiven', 'AmountGot'), extra=1, can_delete=False, validate_min=1)
+    transactionformset = inlineformset_factory(Customer, CustomerTransaction, fields=('AmountGiven', 'AmountGot'),
+                                               extra=1, can_delete=False, validate_min=1)
     customer = Customer.objects.get(id=pk)
 
     if request.method == 'POST':
